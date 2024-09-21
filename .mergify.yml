@@ -1,0 +1,19 @@
+# Copyright 2024 Dotanuki Labs
+# SPDX-License-Identifier: MIT
+
+pull_request_rules:
+  - name: Automatic merge for Renovate PRs
+    conditions:
+      - author~=^renovate\[bot\]$
+      - check-success=component-tests
+    actions:
+      merge:
+        method: squash
+
+  - name: Be author's friend
+    conditions:
+      - author~=ubiratansoares
+      - check-success=component-tests
+    actions:
+      merge:
+        method: squash

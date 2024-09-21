@@ -1,0 +1,40 @@
+# Copyright 2024 Dotanuki Labs
+# SPDX-License-Identifier: MIT
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  quality-checks:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Project Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - name: Check typos on source files
+        uses: dotanuki-labs/github-actions/quality/typos@main
+
+      - name: Lint Markdown files
+        uses: dotanuki-labs/github-actions/quality/markdown@main
+
+      - name: Check MIT license on source files
+        uses: dotanuki-labs/github-actions/foss/check-licenses@main
+        with:
+          file-patterns: "*.sh,*.yml"
+          license: "mit"
+
+  component-tests:
+    needs: quality-checks
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Project Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - name: Run tests
+        run: ./src/main.sh
