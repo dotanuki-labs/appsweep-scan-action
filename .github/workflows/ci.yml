@@ -68,12 +68,16 @@ jobs:
         run: ./tests/fixtures.sh
 
       - name: Component test for iOS GHA
-        uses: ./scan
+        uses: ./
         with:
           archive-file: .tmp/pocket-casts-ios.xcarchive
+        env:
+          APPSWEEP_API_KEY: ${{ secrets.APPSWEEP_DOTANUKI_POCKETCASTS_IOS_KEY }}
 
       - name: Component test for Android GHA
-        uses: ./scan
+        uses: ./
         with:
           archive-file: .tmp/pocket-casts-android.apk
           wait-for-summary: true
+        env:
+          APPSWEEP_API_KEY: ${{ secrets.APPSWEEP_DOTANUKI_POCKETCASTS_ANDROID_KEY }}

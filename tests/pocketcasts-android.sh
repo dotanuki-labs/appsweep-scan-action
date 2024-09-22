@@ -17,4 +17,4 @@ actual_dir=$(pwd)
 rm -rf "$actual_dir/.tmp" && mkdir "$actual_dir/.tmp"
 curl -fsSL -o "$actual_dir/.tmp/$package" -C - "$download_url"
 
-"$actual_dir"/scan/main.sh --archive "$actual_dir/.tmp/$package" --summary "true"
+"$actual_dir"/main.sh --archive "$actual_dir/.tmp/$package" --summary "true"
