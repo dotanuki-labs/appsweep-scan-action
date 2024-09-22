@@ -23,4 +23,4 @@ rm -rf "$actual_dir/.tmp" && mkdir "$actual_dir/.tmp"
 curl -fsSL -o "$actual_dir/.tmp/$apk" -C - "$apk_download_url"
 curl -fsSL -o "$actual_dir/.tmp/$mappings" -C - "$mappings_download_url"
 
-src/main.sh "$actual_dir/.tmp/$apk" "$actual_dir/.tmp/$mappings"
+src/main.sh --archive "$actual_dir/.tmp/$apk" --extras "$actual_dir/.tmp/$mappings"
