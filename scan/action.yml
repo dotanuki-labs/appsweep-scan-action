@@ -13,14 +13,15 @@ inputs:
     description: >
       Path to the R8/proguard mappings file (Android) or folder with dSyms (iOS)
     required: false
+    default: "none"
   wait-for-summary:
     description: >
       Whether or not this Action should wait for scan outcomes and show the summary of issues
-    default: "false"
+    default: "none"
     required: false
 
 runs:
   using: "composite"
   steps:
     - shell: bash
-      run: ${{ github.action_path }}src/main.sh --archive ${{ inputs.archive-file }} --extras ${{ inputs.symbols }} --summary ${{ inputs.wait-for-summary }}
+      run: ${{ github.action_path }}/main.sh --archive ${{ inputs.archive-file }} --extras ${{ inputs.symbols }} --summary ${{ inputs.wait-for-summary }}

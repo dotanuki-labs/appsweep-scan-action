@@ -24,4 +24,4 @@ curl -fsSL -o "$actual_dir/.tmp/$ipa" -C - "$ipa_download_url"
 curl -fsSL -o "$actual_dir/.tmp/$dsyms_zip" -C - "$dsyms_download_url"
 unzip -d "$actual_dir/.tmp/dsyms" "$actual_dir/.tmp/$dsyms_zip" >/dev/null 2>&1
 
-src/main.sh --archive "$actual_dir/.tmp/$ipa" --extras "$actual_dir/.tmp/dsyms"
+"$actual_dir"/scan/main.sh --archive "$actual_dir/.tmp/$ipa" --extras "$actual_dir/.tmp/dsyms"

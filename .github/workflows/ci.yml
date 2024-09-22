@@ -37,22 +37,22 @@ jobs:
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Test scanning standalone Android apk
-        run: ./e2e/pocketcasts-android.sh
+        run: ./tests/pocketcasts-android.sh
         env:
           APPSWEEP_API_KEY: ${{ secrets.APPSWEEP_DOTANUKI_POCKETCASTS_ANDROID_KEY }}
 
       - name: Test scanning standalone iOS xcarchive
-        run: ./e2e/pocketcasts-ios.sh
+        run: ./tests/pocketcasts-ios.sh
         env:
           APPSWEEP_API_KEY: ${{ secrets.APPSWEEP_DOTANUKI_POCKETCASTS_IOS_KEY }}
 
       - name: Test scanning iOS ipa plus dSyms
-        run: ./e2e/bitwarden-ios.sh
+        run: ./tests/bitwarden-ios.sh
         env:
           APPSWEEP_API_KEY: ${{ secrets.APPSWEEP_DOTANUKI_BITWARDEN_IOS_KEY }}
 
       - name: Test scanning Android apk plus mappings
-        run: ./e2e/cromite-android.sh
+        run: ./tests/cromite-android.sh
         env:
           APPSWEEP_API_KEY: ${{ secrets.APPSWEEP_DOTANUKI_CROMITE_ANDROID_KEY }}
 
@@ -65,15 +65,15 @@ jobs:
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - name: Prepares fixtures
-        run: ./src/fixtures.sh
+        run: ./tests/fixtures.sh
 
       - name: Component test for iOS GHA
-        uses: ./
+        uses: ./scan
         with:
           archive-file: .tmp/pocket-casts-ios.xcarchive
 
       - name: Component test for Android GHA
-        uses: ./
+        uses: ./scan
         with:
           archive-file: .tmp/pocket-casts-android.apk
           wait-for-summary: true
