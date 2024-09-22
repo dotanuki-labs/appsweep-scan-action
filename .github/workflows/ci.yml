@@ -64,5 +64,16 @@ jobs:
       - name: Project Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
-      - name: Run tests
-        run: echo "To do"
+      - name: Prepares fixtures
+        run: ./src/fixtures.sh
+
+      - name: Component test for iOS GHA
+        uses: ./
+        with:
+          archive-file: .tmp/pocket-casts-ios.xcarchive
+
+      - name: Component test for Android GHA
+        uses: ./
+        with:
+          archive-file: .tmp/pocket-casts-android.apk
+          wait-for-summary: true

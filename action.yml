@@ -1,0 +1,26 @@
+# Copyright 2024 Dotanuki Labs
+# SPDX-License-Identifier: MIT
+
+name: "appsweep-scan-action"
+description: "Scan Android or iOS artifacts for security issues with Guardsquare Appsweep"
+
+inputs:
+  archive-file:
+    description: >
+      Path to the Android archive to scan. Accepted formats: '.aab' and '.apk'
+    required: true
+  symbols:
+    description: >
+      Path to the R8/proguard mappings file (Android) or folder with dSyms (iOS)
+    required: false
+  wait-for-summary:
+    description: >
+      Whether or not this Action should wait for scan outcomes and show the summary of issues
+    default: "false"
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: ${{ github.action_path }}src/main.sh --archive ${{ inputs.archive-file }} --extras ${{ inputs.symbols }} --summary ${{ inputs.wait-for-summary }}
