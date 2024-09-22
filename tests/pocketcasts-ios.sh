@@ -2,7 +2,7 @@
 # Copyright 2024 Dotanuki Labs
 # SPDX-License-Identifier: MIT
 
-set -euo pipefail
+set -e
 
 readonly repo="Automattic/pocket-casts-ios"
 readonly version="7.72"
@@ -17,4 +17,4 @@ actual_dir=$(pwd)
 rm -rf "$actual_dir/.tmp" && mkdir "$actual_dir/.tmp"
 curl -fsSL -o "$actual_dir/.tmp/$package" -C - "$download_url"
 
-"$actual_dir"/scan/main.sh --archive "$actual_dir/.tmp/$package" --summary
+"$actual_dir"/scan/main.sh --archive "$actual_dir/.tmp/$package" --summary "true"

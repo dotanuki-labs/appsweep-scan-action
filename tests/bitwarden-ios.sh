@@ -2,7 +2,7 @@
 # Copyright 2024 Dotanuki Labs
 # SPDX-License-Identifier: MIT
 
-set -euo pipefail
+set -e
 
 readonly repo="bitwarden/ios"
 readonly version="v2024.9.1"

@@ -2,7 +2,7 @@
 # Copyright 2024 Dotanuki Labs
 # SPDX-License-Identifier: MIT
 
-set -euo pipefail
+set -e
 
 readonly repo="uazo/cromite"
 readonly version="v129.0.6668.59-bbcb812cffa4e2815760cd7fc3e34b00b4e39ea1"
