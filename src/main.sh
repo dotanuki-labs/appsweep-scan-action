@@ -93,7 +93,7 @@ case "$archive" in
     echo "Supported archives :"
     echo
     echo "- Android : .aab, .apk"
-    echo "- iOS : .ipa, .xcarchive"
+    echo "- iOS     : .ipa, .xcarchive"
     echo
     exit 1
     ;;
