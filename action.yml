@@ -7,7 +7,8 @@ description: "Scan Android or iOS artifacts for security issues with Guardsquare
 inputs:
   archive-file:
     description: >
-      Path to the Android archive to scan. Accepted formats: '.aab' and '.apk'
+      Path to the deployable archive to scan.
+      Accepted formats: '.aab' + '.apk' (Android); '.ipa' + '.xcarchive' (iOS)
     required: true
   symbols:
     description: >
