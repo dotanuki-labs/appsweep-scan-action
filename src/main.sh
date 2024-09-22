@@ -8,9 +8,6 @@ readonly install_location="$HOME/bin"
 readonly guardsquare="$install_location/guardsquare"
 readonly installer_url="https://platform.guardsquare.com/cli/install.sh"
 
-readonly archive="$1"
-readonly extras="$2"
-
 require_archive() {
     if [[ -z "$archive" ]]; then
         echo "✗ ERROR : expecting an 'archive' input"
@@ -42,42 +39,95 @@ install_guardsquare_cli() {
     curl -sSL "$installer_url" | sh -s -- -y --bin-dir "$install_location"
 }
 
+report_scan() {
+    local scan_output="$1"
+    local more_details="$2"
+
+    if [[ -z "$more_details" ]]; then
+        local url
+        url=$(echo "$scan_output" | jq '.url')
+        echo "Check scan details at : $url"
+    else
+        local id
+        id=$(echo "$scan_output" | jq '.id')
+        "$guardsquare" scan summary --wait-for static "$id"
+    fi
+}
+
 execute_android_scan() {
+    local archive="$1"
+    local extras="$2"
+    local summary="$3"
+    local scan=
+
     if [[ -z "$extras" ]]; then
         echo "Scanning standalone archive : $archive"
         install_guardsquare_cli
-        "$guardsquare" scan "$archive" --commit-hash "$GITHUB_SHA"
+        scan=$("$guardsquare" scan "$archive" --commit-hash "$GITHUB_SHA" --format "json")
     else
         require_r8_or_proguard_mappings
         echo "Scanning archive     : $archive"
         echo "R8/Proguard mappings  : $extras"
         install_guardsquare_cli
-        "$guardsquare" scan "$archive" --mapping-file "$extras" --commit-hash "$GITHUB_SHA"
+        scan=$("$guardsquare" scan "$archive" --mapping-file "$extras" --commit-hash "$GITHUB_SHA" --format "json")
     fi
+
+    report_scan "$scan" "$summary"
 }
 
 execute_ios_scan() {
+    local archive="$1"
+    local extras="$2"
+    local scan=
+
     if [[ -z "$extras" ]]; then
         echo "Scanning standalone archive : $archive"
         install_guardsquare_cli
-        "$guardsquare" scan "$archive" --commit-hash "$GITHUB_SHA"
+        scan=$("$guardsquare" scan "$archive" --commit-hash "$GITHUB_SHA" --format "json")
     else
         require_dsyms_folder
         echo "Scanning archive : $archive"
         echo "dsyms location : $extras"
         install_guardsquare_cli
-        "$guardsquare" scan "$archive" --dsym "$extras" --commit-hash "$GITHUB_SHA"
+        scan=$("$guardsquare" scan "$archive" --dsym "$extras" --commit-hash "$GITHUB_SHA" --format "json")
     fi
+
+    report_scan "$scan" "$summary"
 }
+
+archive=
+extras=
+summary=
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+    --archive)
+        archive="$2"
+        shift 2
+        ;;
+    --extras)
+        extras="$2"
+        shift 2
+        ;;
+    --summary)
+        summary=1
+        shift 1
+        ;;
+    *)
+        error "Unknown argument: $1"
+        exit 1
+        ;;
+    esac
+done
 
 require_archive
 
 case "$archive" in
 *.apk | *.aab)
-    execute_android_scan
+    execute_android_scan "$archive" "$extras" "$summary"
     ;;
 *.xcarchive | *.ipa)
-    execute_ios_scan
+    execute_ios_scan "$archive" "$extras" "$summary"
     ;;
 *)
     echo "Error: unsupported archive → $archive"
