@@ -20,6 +20,16 @@ require_archive() {
     fi
 }
 
+sanitize_inputs() {
+    if [[ "$extras" == "none" ]]; then
+        unset extras
+    fi
+
+    if [[ "$summary" == "none" ]]; then
+        unset summary
+    fi
+}
+
 require_r8_or_proguard_mappings() {
     if [[ ! -f "$extras" ]]; then
         echo "✗ ERROR : '$extras' R8/proguard mapping file not found"
@@ -110,17 +120,18 @@ while [ "$#" -gt 0 ]; do
         shift 2
         ;;
     --summary)
-        summary=1
-        shift 1
+        summary="$2"
+        shift 2
         ;;
     *)
-        error "Unknown argument: $1"
+        echo "Unknown argument: $1"
         exit 1
         ;;
     esac
 done
 
 require_archive
+sanitize_inputs
 
 case "$archive" in
 *.apk | *.aab)

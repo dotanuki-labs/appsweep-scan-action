@@ -2,7 +2,7 @@
 # Copyright 2024 Dotanuki Labs
 # SPDX-License-Identifier: MIT
 
-set -euo pipefail
+set -e
 
 readonly repo="uazo/cromite"
 readonly version="v129.0.6668.59-bbcb812cffa4e2815760cd7fc3e34b00b4e39ea1"
@@ -23,4 +23,4 @@ rm -rf "$actual_dir/.tmp" && mkdir "$actual_dir/.tmp"
 curl -fsSL -o "$actual_dir/.tmp/$apk" -C - "$apk_download_url"
 curl -fsSL -o "$actual_dir/.tmp/$mappings" -C - "$mappings_download_url"
 
-src/main.sh --archive "$actual_dir/.tmp/$apk" --extras "$actual_dir/.tmp/$mappings"
+"$actual_dir"/main.sh --archive "$actual_dir/.tmp/$apk" --extras "$actual_dir/.tmp/$mappings"
