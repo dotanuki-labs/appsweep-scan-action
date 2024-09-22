@@ -8,17 +8,17 @@ readonly install_location="$HOME/bin"
 readonly guardsquare="$install_location/guardsquare"
 readonly installer_url="https://platform.guardsquare.com/cli/install.sh"
 
-readonly artifact="$1"
+readonly archive="$1"
 readonly extras="$2"
 
-require_artifact() {
-    if [[ -z "$artifact" ]]; then
-        echo "✗ ERROR : expecting an 'artifact' input"
+require_archive() {
+    if [[ -z "$archive" ]]; then
+        echo "✗ ERROR : expecting an 'archive' input"
         exit 1
     fi
 
-    if [[ ! -f "$artifact" ]]; then
-        echo "✗ ERROR : '$artifact' not found"
+    if [[ ! -f "$archive" ]]; then
+        echo "✗ ERROR : '$archive' not found"
         exit 1
     fi
 }
@@ -46,15 +46,15 @@ execute_android_scan() {
     local scan_id
 
     if [[ -z "$extras" ]]; then
-        echo "Scanning standalone artifact : $artifact"
+        echo "Scanning standalone archive : $archive"
         install_guardsquare_cli
-        scan_id=$("$guardsquare" scan "$artifact" --commit-hash "$GITHUB_SHA" --format "{{.ID}}")
+        scan_id=$("$guardsquare" scan "$archive" --commit-hash "$GITHUB_SHA" --format "{{.ID}}")
     else
         require_r8_or_proguard_mappings
-        echo "Scanning artifact     : $artifact"
+        echo "Scanning archive     : $archive"
         echo "R8/Proguard mappings  : $extras"
         install_guardsquare_cli
-        scan_id=$("$guardsquare" scan "$artifact" --mapping-file "$extras" --commit-hash "$GITHUB_SHA" --format "{{.ID}}")
+        scan_id=$("$guardsquare" scan "$archive" --mapping-file "$extras" --commit-hash "$GITHUB_SHA" --format "{{.ID}}")
     fi
 
     "$guardsquare" scan summary --wait-for static "$scan_id" --format json | jq
@@ -64,23 +64,23 @@ execute_ios_scan() {
     local scan_id
 
     if [[ -z "$extras" ]]; then
-        echo "Scanning standalone artifact : $artifact"
+        echo "Scanning standalone archive : $archive"
         install_guardsquare_cli
-        scan_id=$("$guardsquare" scan "$artifact" --commit-hash "$GITHUB_SHA" --format "{{.ID}}")
+        scan_id=$("$guardsquare" scan "$archive" --commit-hash "$GITHUB_SHA" --format "{{.ID}}")
     else
         require_dsyms_folder
-        echo "Scanning artifact : $artifact"
+        echo "Scanning archive : $archive"
         echo "dsyms location    : $extras"
         install_guardsquare_cli
-        scan_id=$("$guardsquare" scan "$artifact" --dsym "$extras" --commit-hash "$GITHUB_SHA" --format "{{.ID}}")
+        scan_id=$("$guardsquare" scan "$archive" --dsym "$extras" --commit-hash "$GITHUB_SHA" --format "{{.ID}}")
     fi
 
     "$guardsquare" scan summary --wait-for static "$scan_id" --format json | jq
 }
 
-require_artifact
+require_archive
 
-case "$artifact" in
+case "$archive" in
 *.apk | *.aab)
     execute_android_scan
     ;;
@@ -88,7 +88,13 @@ case "$artifact" in
     execute_ios_scan
     ;;
 *)
-    echo "Error: unsupported artifact → $artifact"
+    echo "Error: unsupported archive → $archive"
+    echo
+    echo "Supported archives :"
+    echo
+    echo "- Android : .aab, .apk"
+    echo "- iOS : .ipa, .xcarchive"
+    echo
     exit 1
     ;;
 esac
