@@ -46,6 +46,16 @@ jobs:
         env:
           APPSWEEP_API_KEY: ${{ secrets.APPSWEEP_DOTANUKI_POCKETCASTS_IOS_KEY }}
 
+      - name: Test scanning iOS ipa plus dSyms
+        run: ./e2e/bitwarden-ios.sh
+        env:
+          APPSWEEP_API_KEY: ${{ secrets.APPSWEEP_DOTANUKI_BITWARDEN_IOS_KEY }}
+
+      - name: Test scanning Android apk plus mappings
+        run: ./e2e/cromite-android.sh
+        env:
+          APPSWEEP_API_KEY: ${{ secrets.APPSWEEP_DOTANUKI_CROMITE_ANDROID_KEY }}
+
   component-tests:
     needs: e2e
     runs-on: ubuntu-22.04

@@ -43,39 +43,31 @@ install_guardsquare_cli() {
 }
 
 execute_android_scan() {
-    local scan_id
-
     if [[ -z "$extras" ]]; then
         echo "Scanning standalone archive : $archive"
         install_guardsquare_cli
-        scan_id=$("$guardsquare" scan "$archive" --commit-hash "$GITHUB_SHA" --format "{{.ID}}")
+        "$guardsquare" scan "$archive" --commit-hash "$GITHUB_SHA"
     else
         require_r8_or_proguard_mappings
         echo "Scanning archive     : $archive"
         echo "R8/Proguard mappings  : $extras"
         install_guardsquare_cli
-        scan_id=$("$guardsquare" scan "$archive" --mapping-file "$extras" --commit-hash "$GITHUB_SHA" --format "{{.ID}}")
+        "$guardsquare" scan "$archive" --mapping-file "$extras" --commit-hash "$GITHUB_SHA"
     fi
-
-    "$guardsquare" scan summary --wait-for static "$scan_id" --format json | jq
 }
 
 execute_ios_scan() {
-    local scan_id
-
     if [[ -z "$extras" ]]; then
         echo "Scanning standalone archive : $archive"
         install_guardsquare_cli
-        scan_id=$("$guardsquare" scan "$archive" --commit-hash "$GITHUB_SHA" --format "{{.ID}}")
+        "$guardsquare" scan "$archive" --commit-hash "$GITHUB_SHA"
     else
         require_dsyms_folder
         echo "Scanning archive : $archive"
-        echo "dsyms location    : $extras"
+        echo "dsyms location : $extras"
         install_guardsquare_cli
-        scan_id=$("$guardsquare" scan "$archive" --dsym "$extras" --commit-hash "$GITHUB_SHA" --format "{{.ID}}")
+        "$guardsquare" scan "$archive" --dsym "$extras" --commit-hash "$GITHUB_SHA"
     fi
-
-    "$guardsquare" scan summary --wait-for static "$scan_id" --format json | jq
 }
 
 require_archive
@@ -93,7 +85,7 @@ case "$archive" in
     echo "Supported archives :"
     echo
     echo "- Android : .aab, .apk"
-    echo "- iOS : .ipa, .xcarchive"
+    echo "- iOS     : .ipa, .xcarchive"
     echo
     exit 1
     ;;
