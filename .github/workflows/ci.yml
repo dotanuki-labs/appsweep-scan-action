@@ -28,7 +28,7 @@ jobs:
           file-patterns: "*.sh,*.yml"
           license: "mit"
 
-  component-tests:
+  e2e:
     needs: quality-checks
     runs-on: ubuntu-22.04
 
@@ -36,5 +36,23 @@ jobs:
       - name: Project Checkout
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
+      - name: Test scanning standalone Android apk
+        run: ./e2e/pocketcasts-android.sh
+        env:
+          APPSWEEP_API_KEY: ${{ secrets.APPSWEEP_DOTANUKI_POCKETCASTS_ANDROID_KEY }}
+
+      - name: Test scanning standalone iOS xcarchive
+        run: ./e2e/pocketcasts-ios.sh
+        env:
+          APPSWEEP_API_KEY: ${{ secrets.APPSWEEP_DOTANUKI_POCKETCASTS_IOS_KEY }}
+
+  component-tests:
+    needs: e2e
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Project Checkout
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
       - name: Run tests
-        run: ./src/main.sh
+        run: echo "To do"
