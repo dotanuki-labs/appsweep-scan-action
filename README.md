@@ -15,31 +15,31 @@ with a few goodies, in particular adding support to iOS deployables.
 
 ## Using
 
-An example Workflow
+An example Workflow for Android projects
 
 ```yaml
 name: CI
+
 on: [push]
-jobs:
-  build-and-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@latest
 
-      # Run any tasks that output a deployable artifact
-      # eg ./gradlew app:assembleRelease
-      - run: ./build/my/product.sh
+env:
+  # Don't forget to add this EXACT 'APPSWEEP_API_KEY' environment variable
+  # It's required by guardsquare-cli
+  APPSWEEP_API_KEY: ${{ secrets.APPSWEEP_MY_PRODUCT_KEY }}
 
-      # .
-      # .
-      # .
+  jobs:
+    build-and-scan:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@latest
 
-      - uses: dotanuki-labs/appsweep-scan-action@latest
-        with:
-          archive-file: app/build/outputs/apk/release/my-product.apk
-        env:
-          # Don't forget to add this as an environment variable
-          APPSWEEP_API_KEY: ${{ secrets.APPSWEEP_MY_PRODUCT_KEY }}
+        # Run any tasks that output a deployable artifact
+        - run: ./gradlew app:assembleRelease
+
+        - uses: dotanuki-labs/appsweep-scan-action@latest
+          with:
+            archive-file: app/build/outputs/apk/release/my-product.apk
+
 ```
 
 > [!WARNING]
@@ -56,9 +56,9 @@ This action accepts the following inputs:
 
 Regarding values accepted by the inputs:
 
-- `archive-file` accepts '.aab', '.apk', '.ipa', '.xcarchive' file
+- `archive-file` accepts `.aab`, `.apk`, `.ipa`, `.xcarchive` file
 - `symbols` accepts either a `mapping.txt` file (Android) or folder with dSyms (iOS)
-- `wait-for-summary` accepts any string to flag opt-in
+- `wait-for-summary` accepts any string, boolean or integer to flag opt-in
 
 In addition to that:
 
@@ -67,7 +67,7 @@ In addition to that:
 
 Last, but not least, `APPSWEEP_API_KEY` is mandatory in the execution since it's
 required by `guardsquare-cli`. You can provision it scoped to a
-Step (like the previous example), to Job or Workflow
+`Step`, `Job` or `Workflow`.
 
 ## License
 
